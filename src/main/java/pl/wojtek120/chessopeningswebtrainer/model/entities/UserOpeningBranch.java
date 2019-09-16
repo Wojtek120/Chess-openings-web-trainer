@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "user_opening_branch")
+@Table(name = "user_opening_branches")
 @Getter @Setter
 public class UserOpeningBranch extends BaseEntity {
 

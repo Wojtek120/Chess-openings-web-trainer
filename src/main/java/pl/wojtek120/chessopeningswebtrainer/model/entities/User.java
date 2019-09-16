@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Getter @Setter
 public class User extends BaseEntity {
 
@@ -33,7 +33,7 @@ public class User extends BaseEntity {
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
-    private List<UserOpening> userOpeningBranches = new ArrayList<>();
+    private List<UserOpening> userOpenings = new ArrayList<>();
 
     @OneToOne
     private UserDetails userDetails;

@@ -6,7 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user_opening_move")
+@Table(name = "user_opening_moves")
 @Getter @Setter
 public class UserOpeningMove extends BaseEntity {
 
