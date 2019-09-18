@@ -3,6 +3,7 @@ package pl.wojtek120.chessopeningswebtrainer.model.dto.user;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import pl.wojtek120.chessopeningswebtrainer.model.entities.UserDetails;
+import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpeningBranch;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -33,6 +34,6 @@ public class UserDto implements Serializable {
 
     private Set<String> roles = new HashSet<>();
 
-    private List<Long> userOpeningBranches = new ArrayList<>();
+    private List<UserOpeningBranch> userOpeningBranches = new ArrayList<>();
 
 }

@@ -1,8 +1,8 @@
 package pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.move;
 
 import lombok.Data;
+import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpeningBranch;
 
-import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -12,6 +12,6 @@ public class UserOpeningMoveDto implements Serializable {
     @NotNull
     private Integer moveNumber;
     private String comment;
-    private Long userOpeningBranchId;
+    private UserOpeningBranch userOpeningBranch;
 
 }

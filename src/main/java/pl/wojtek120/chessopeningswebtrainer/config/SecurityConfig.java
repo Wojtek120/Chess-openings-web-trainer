@@ -38,13 +38,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/register").anonymous()
-                .anyRequest().authenticated()
+                    .antMatchers("/").anonymous()
+                    .antMatchers("/register").anonymous()
+                    .antMatchers("/admin/**").permitAll()//.hasRole("ADMIN")
+                    .antMatchers("/img/**").permitAll()
+                    .antMatchers("/static/**").permitAll()
+                    .anyRequest().authenticated()
                 .and()
-                .formLogin()
+                    .formLogin()
                 .and()
-                .csrf()
+                    .csrf()
                 .and();
     }
 }

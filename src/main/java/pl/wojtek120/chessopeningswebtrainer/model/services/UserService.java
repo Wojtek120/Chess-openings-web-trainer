@@ -1,7 +1,7 @@
 package pl.wojtek120.chessopeningswebtrainer.model.services;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.UserDto;
 import pl.wojtek120.chessopeningswebtrainer.model.entities.User;
 import pl.wojtek120.chessopeningswebtrainer.model.repositories.UserRepository;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Service
 public class UserService implements ServiceInterface<UserDto> {
 
     private final ModelMapper modelMapper;

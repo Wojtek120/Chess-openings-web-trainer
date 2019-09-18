@@ -1,8 +1,8 @@
 package pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening;
 
 import lombok.Data;
+import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpeningBranch;
 
-import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -19,6 +19,6 @@ public class UserOpeningDto implements Serializable {
     @NotBlank
     private String playedAs;
     private Long userId;
-    private List<Long> userOpeningBranchesId = new ArrayList<>();
+    private List<UserOpeningBranch> userOpeningBranches = new ArrayList<>();
 
 }

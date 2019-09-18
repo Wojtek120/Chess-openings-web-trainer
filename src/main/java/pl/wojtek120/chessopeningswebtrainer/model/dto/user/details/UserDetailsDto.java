@@ -1,6 +1,7 @@
 package pl.wojtek120.chessopeningswebtrainer.model.dto.user.details;
 
 import lombok.Data;
+import pl.wojtek120.chessopeningswebtrainer.model.entities.User;
 
 import java.io.Serializable;
 
@@ -11,5 +12,5 @@ public class UserDetailsDto implements Serializable {
     private String lastName;
     private String biographicalNote;
     private Integer elo;
-    private Long userId;
+    private User user;
 }

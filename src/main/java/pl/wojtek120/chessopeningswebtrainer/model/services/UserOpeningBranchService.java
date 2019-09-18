@@ -2,6 +2,7 @@ package pl.wojtek120.chessopeningswebtrainer.model.services;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.branch.UserOpeningBranchDto;
 import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpeningBranch;
 import pl.wojtek120.chessopeningswebtrainer.model.repositories.UserOpeningBranchRepository;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Service
 public class UserOpeningBranchService implements ServiceInterface<UserOpeningBranchDto> {
 
     private final ModelMapper modelMapper;

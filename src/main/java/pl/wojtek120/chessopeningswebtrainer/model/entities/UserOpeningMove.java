@@ -13,6 +13,8 @@ public class UserOpeningMove extends BaseEntity {
     @Column(name = "move_number", nullable = false)
     private Integer moveNumber;
 
+    private String pgn;
+
     private String comment;
 
     @ManyToOne
