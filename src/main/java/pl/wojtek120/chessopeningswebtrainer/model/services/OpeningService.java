@@ -7,11 +7,13 @@ import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.UserOpeningDt
 import pl.wojtek120.chessopeningswebtrainer.model.entities.Opening;
 import pl.wojtek120.chessopeningswebtrainer.model.repositories.OpeningRepository;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class OpeningService implements ServiceInterface<OpeningDto> {
     
     private final ModelMapper modelMapper;
@@ -56,8 +58,11 @@ public class OpeningService implements ServiceInterface<OpeningDto> {
     }
 
     @Override
-    public void save(OpeningDto dto) {
-        openingRepository.save(convertToEntity(dto));
+    public Long save(OpeningDto dto) {
+
+        Opening opening = convertToEntity(dto);
+
+        return openingRepository.save(opening).getId();
     }
 
     @Override

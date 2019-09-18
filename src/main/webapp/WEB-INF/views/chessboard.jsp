@@ -1,4 +1,5 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: wojciech
@@ -26,33 +27,76 @@
 
     <title><spring:message code="main-chessboard.header"/><</title>
 
+    <style>
+        ul li {
+            margin-left: 10%;
+        }
+    </style>
 </head>
 <body>
-<div id="myBoard" style="width: 400px"></div>
-<button id="changeOrientationBtn">Change orientation</button>
-<label>Status:</label>
-<div id="status"></div>
-<label>FEN:</label>
-<div id="fen"></div>
-<label>PGN:</label>
-<div id="pgn"></div>
+
+<c:import url="header.jsp"/>
+
+<section class="hero has-background-primary" id="newBookSection">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title has-text-white">
+                <spring:message code="main-chessboard.training-title"/>
+            </h1>
+            <h2 class="subtitle has-text-white">
+                <spring:message code="main-chessboard.training-subtitle"/>
+            </h2>
+        </div>
+    </div>
+</section>
+
+<section class="has-background-light">
+    <br>
 
 
-<h4><spring:message code="main-chessboard.moves"/></h4>
-<div>
-    <table class="table" id="pgnTable">
-    </table>
-</div>
+    <div class="columns is-mobile">
+        <div class="column is-4  is-centered">
+            <div class="columns is-mobile">
+                <div class="column">
+                    <button id="changeOrientationBtn">Change orientation</button>
+                    <label>Status:</label>
+                    <div id="status"></div>
+                </div>
+                <div class="column is-centered">
+                    <h4><spring:message code="main-chessboard.moves.tree"/></h4>
+                    <button id="saveTreeToDatabase"><spring:message code="main-chessboard.save-to-database"/></button>
+                    <div id="openingTree">
+                        <ul>
+                            <li id="mainTree">
 
-<h4><spring:message code="main-chessboard.moves.tree"/></h4>
-<div id="openingTree">
-    <ul>
-        <li id="mainTree">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column is-4  is-centered">
+            <div id="myBoard" style="width: 400px"></div>
+        </div>
+        <div class="column is-4" style="text-align:left;">
 
-        </li>
-    </ul>
-</div>
-<button id="saveTreeToDatabase" > <spring:message code="main-chessboard.save-to-database"/> </button>
+            <h4><spring:message code="main-chessboard.moves"/></h4>
+            <table class="table" id="pgnTable">
+            </table>
+        </div>
+    </div>
+
+
+    <%--        <label>FEN:</label>--%>
+    <%--        <div id="fen"></div>--%>
+    <%--        <label>PGN:</label>--%>
+    <%--        <div id="pgn"></div>--%>
+
+    <br>
+</section>
+
+
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
 <script src="static/js/chessboard.js"></script>
 </body>

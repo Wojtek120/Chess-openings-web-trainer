@@ -1,25 +1,32 @@
 package pl.wojtek120.chessopeningswebtrainer.model.services;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.branch.UserOpeningBranchDto;
+import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpening;
 import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpeningBranch;
+import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpeningMove;
 import pl.wojtek120.chessopeningswebtrainer.model.repositories.UserOpeningBranchRepository;
+import pl.wojtek120.chessopeningswebtrainer.model.repositories.UserOpeningMoveRepository;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UserOpeningBranchService implements ServiceInterface<UserOpeningBranchDto> {
 
     private final ModelMapper modelMapper;
     private final UserOpeningBranchRepository userOpeningBranchRepository;
+    private final UserOpeningMoveRepository userOpeningMoveRepository;
 
-    public UserOpeningBranchService(ModelMapper modelMapper, UserOpeningBranchRepository userOpeningBranchRepository) {
+    public UserOpeningBranchService(ModelMapper modelMapper, UserOpeningBranchRepository userOpeningBranchRepository, UserOpeningMoveRepository userOpeningMoveRepository) {
         this.modelMapper = modelMapper;
         this.userOpeningBranchRepository = userOpeningBranchRepository;
+        this.userOpeningMoveRepository = userOpeningMoveRepository;
     }
 
     @Override
@@ -56,8 +63,20 @@ public class UserOpeningBranchService implements ServiceInterface<UserOpeningBra
     }
 
     @Override
-    public void save(UserOpeningBranchDto dto) {
-        userOpeningBranchRepository.save(convertToEntity(dto));
+    public Long save(UserOpeningBranchDto dto) {
+        UserOpeningBranch userOpeningBranch = convertToEntity(dto);
+
+        UserOpening userOpening = new UserOpening();
+        userOpening.setId(dto.getUserOpeningId());
+        userOpeningBranch.setUserOpening(userOpening);
+
+        userOpeningBranch.getUserOpeningMoves().addAll(dto.getUserOpeningMovesIds().stream().map(id -> {
+            UserOpeningMove userOpeningMove = new UserOpeningMove();
+            userOpeningMove.setId(id);
+            return userOpeningMove;
+        }).collect(Collectors.toList()));
+
+        return userOpeningBranchRepository.save(userOpeningBranch).getId();
     }
 
     @Override
@@ -76,5 +95,13 @@ public class UserOpeningBranchService implements ServiceInterface<UserOpeningBra
 
     private UserOpeningBranch convertToEntity(UserOpeningBranchDto userOpeningBranchDto){
         return modelMapper.map(userOpeningBranchDto, UserOpeningBranch.class);
+    }
+
+
+    public void deleteAllByOpeningIdWithAllMoves(Long openingId){
+        List<UserOpeningBranch> allByUserOpeningId = userOpeningBranchRepository.getAllByUserOpeningId(openingId);
+
+        allByUserOpeningId.forEach( e -> userOpeningMoveRepository.deleteAllByUserOpeningBranchId(e.getId()));
+        userOpeningBranchRepository.deleteAllByUserOpeningId(openingId);
     }
 }

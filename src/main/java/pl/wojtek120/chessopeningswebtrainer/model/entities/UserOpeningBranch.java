@@ -13,8 +13,11 @@ import java.util.List;
 @Getter @Setter
 public class UserOpeningBranch extends BaseEntity {
 
-    @Column(name = "branch_from_which_branched_id", nullable = false)
-    private UserOpeningBranch branchFromWhichBranched;
+    @Column(name = "branch_number", nullable = false)
+    private Integer branchNumber;
+
+    @Column(name = "parent_branch_number", nullable = false)
+    private Integer parentBranch;
 
     @OneToMany(mappedBy = "userOpeningBranch")
     private List<UserOpeningMove> userOpeningMoves= new ArrayList<>();

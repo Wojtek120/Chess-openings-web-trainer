@@ -4,13 +4,18 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.UserOpeningDto;
 import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpening;
+import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpeningBranch;
+import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpeningMove;
 import pl.wojtek120.chessopeningswebtrainer.model.repositories.UserOpeningRepository;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UserOpeningService implements ServiceInterface<UserOpeningDto> {
 
     private final ModelMapper modelMapper;
@@ -55,8 +60,17 @@ public class UserOpeningService implements ServiceInterface<UserOpeningDto> {
     }
 
     @Override
-    public void save(UserOpeningDto dto) {
-        userOpeningRepository.save(convertToEntity(dto));
+    public Long save(UserOpeningDto dto) {
+
+        UserOpening userOpening = convertToEntity(dto);
+
+        userOpening.getUserOpeningBranches().addAll(dto.getUserOpeningBranchIds().stream().map(id -> {
+            UserOpeningBranch userOpeningBranch = new UserOpeningBranch();
+            userOpeningBranch.setId(id);
+            return userOpeningBranch;
+        }).collect(Collectors.toList()));
+
+        return userOpeningRepository.save(userOpening).getId();
     }
 
     @Override

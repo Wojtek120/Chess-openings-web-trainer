@@ -2,23 +2,29 @@ package pl.wojtek120.chessopeningswebtrainer.model.services;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.move.UserOpeningMoveCreationDto;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.move.UserOpeningMoveDto;
 import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpeningMove;
+import pl.wojtek120.chessopeningswebtrainer.model.repositories.UserOpeningBranchRepository;
 import pl.wojtek120.chessopeningswebtrainer.model.repositories.UserOpeningMoveRepository;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class UserOpeningMoveService implements ServiceInterface<UserOpeningMoveDto> {
 
     private final ModelMapper modelMapper;
     private final UserOpeningMoveRepository userOpeningMoveRepository;
+    private final UserOpeningBranchRepository userOpeningBranchRepository;
 
-    public UserOpeningMoveService(ModelMapper modelMapper, UserOpeningMoveRepository userOpeningMoveRepository) {
+    public UserOpeningMoveService(ModelMapper modelMapper, UserOpeningMoveRepository userOpeningMoveRepository, UserOpeningBranchRepository userOpeningBranchRepository) {
         this.modelMapper = modelMapper;
         this.userOpeningMoveRepository = userOpeningMoveRepository;
+        this.userOpeningBranchRepository = userOpeningBranchRepository;
     }
 
     @Override
@@ -55,8 +61,20 @@ public class UserOpeningMoveService implements ServiceInterface<UserOpeningMoveD
     }
 
     @Override
-    public void save(UserOpeningMoveDto dto) {
-        userOpeningMoveRepository.save(convertToEntity(dto));
+    public Long save(UserOpeningMoveDto dto) {
+
+        UserOpeningMove userOpeningMove = convertToEntity(dto);
+        userOpeningMove.setUserOpeningBranch(userOpeningBranchRepository.getOne(dto.getUserOpeningBranchId()));
+
+        return userOpeningMoveRepository.save(userOpeningMove).getId();
+    }
+
+    public Long save(UserOpeningMoveCreationDto dto) {
+
+        UserOpeningMove userOpeningMove = convertToEntity(dto);
+        userOpeningMove.setUserOpeningBranch(userOpeningBranchRepository.getOne(dto.getUserOpeningBranchId()));
+
+        return userOpeningMoveRepository.save(userOpeningMove).getId();
     }
 
     @Override

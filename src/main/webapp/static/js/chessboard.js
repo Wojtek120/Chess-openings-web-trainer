@@ -172,7 +172,7 @@ $(() => {
     /**
      * Create json from tree opening
      */
-    const createJsonFromTreeOpening = () => {
+    const getJsonFromTreeOpening = () => {
 
         let arrayToBeConverted = {};
         let actualBranch = 0;
@@ -180,8 +180,7 @@ $(() => {
 
         arrayToBeConverted = addBranchToArray(actualBranch, parentBranchNumber, $("#mainTree"), arrayToBeConverted);
 
-        const json = JSON.stringify({...arrayToBeConverted});
-        console.log(json);
+        return JSON.stringify({...arrayToBeConverted});
     };
 
     /**
@@ -194,16 +193,20 @@ $(() => {
     const addBranchToArray = (actualBranch, parentBranchNumber, branchLi, arrayToAddBranchTo) => {
 
         let nextBranchNumber = actualBranch;
+
         $(branchLi).children().each((index, element) => {
+
+            console.log(arrayToAddBranchTo);
 
             if (element.tagName === "BUTTON") {
                 arrayToAddBranchTo[`branch.${actualBranch}.${parentBranchNumber}.${index}`] = $(element).data("pgn");
             } else {
-                let nextBranches = $(element).find("li");
+                let nextBranches = $(element).children("li");
                 if (nextBranches.length > 0) {
 
                     nextBranches.each((index1, element1) => {
                         nextBranchNumber++;
+
                         arrayToAddBranchTo = addBranchToArray(nextBranchNumber, actualBranch, element1, arrayToAddBranchTo);
                     });
                 }
@@ -214,8 +217,31 @@ $(() => {
     };
 
 
+    /**
+     * When button clicked set ajax connection
+     */
     $("#saveTreeToDatabase").on('click', () => {
-        createJsonFromTreeOpening();
+        const json = getJsonFromTreeOpening();
+        console.log(json);
+
+
+        $.ajax({
+            url: '/chessboard/save/repository',
+            data: json,
+            contentType: "application/json",
+            method: "POST",
+            headers: {"X-CSRF-TOKEN": $("input[name='_csrf']").val()},
+        })
+
+    });
+
+
+    $(function () {
+        var token = $("input[name='_csrf']").val();
+        var header = "X-CSRF-TOKEN";
+        $(document).ajaxSend(function(e, xhr, options) {
+            xhr.setRequestHeader(header, token);
+        });
     });
 
 

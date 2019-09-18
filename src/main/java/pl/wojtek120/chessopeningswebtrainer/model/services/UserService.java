@@ -6,11 +6,13 @@ import pl.wojtek120.chessopeningswebtrainer.model.dto.user.UserDto;
 import pl.wojtek120.chessopeningswebtrainer.model.entities.User;
 import pl.wojtek120.chessopeningswebtrainer.model.repositories.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class UserService implements ServiceInterface<UserDto> {
 
     private final ModelMapper modelMapper;
@@ -55,8 +57,11 @@ public class UserService implements ServiceInterface<UserDto> {
     }
 
     @Override
-    public void save(UserDto dto) {
-        userRepository.save(convertToEntity(dto));
+    public Long save(UserDto dto) {
+
+        User user = convertToEntity(dto);
+
+        return userRepository.save(user).getId();
     }
 
     @Override
