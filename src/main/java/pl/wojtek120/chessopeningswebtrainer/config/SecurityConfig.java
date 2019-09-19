@@ -41,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/").anonymous()
                     .antMatchers("/register").anonymous()
                     .antMatchers("/admin/**").hasRole("ADMIN")
+                    .antMatchers("/user/**").hasRole("USER")
                     .antMatchers("/chessboard").hasRole("USER")
                     .antMatchers("/chessboard/**").hasRole("USER")
                     .antMatchers("/img/**").permitAll()

@@ -81,4 +81,9 @@ public class UserService implements ServiceInterface<UserDto> {
     private User convertToEntity(UserDto userDto){
         return modelMapper.map(userDto, User.class);
     }
+
+
+    public Long getLoggedUserIdByUsername(String username){
+        return  userRepository.getByUsername(username).getId();
+    }
 }

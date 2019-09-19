@@ -37,8 +37,17 @@ public class ChessboardController {
 
     @RequestMapping("")
     public String chessboard() {
+
+        loadOpeningBranchesInfo(1L); //TODO id
+
         return "chessboard";
     }
+
+
+    private String loadOpeningBranchesInfo(Long openingId) {
+        return userOpeningBranchService.loadOpeningBranchesInfo(openingId);
+    }
+
 
     @PostMapping("/save/repository")
     public String saveBranchStringToDatabase(@RequestBody String jsonBranchStr) {
@@ -81,6 +90,7 @@ public class ChessboardController {
             e.printStackTrace();
         }
 
+        loadOpeningBranchesInfo(1L); //TODO usun
 
         return "redirect:/chessboard";
     }

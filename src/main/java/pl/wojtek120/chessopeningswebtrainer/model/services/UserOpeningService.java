@@ -2,10 +2,11 @@ package pl.wojtek120.chessopeningswebtrainer.model.services;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.UserOpeningCreationDto;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.UserOpeningDto;
+import pl.wojtek120.chessopeningswebtrainer.model.entities.User;
 import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpening;
 import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpeningBranch;
-import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpeningMove;
 import pl.wojtek120.chessopeningswebtrainer.model.repositories.UserOpeningRepository;
 
 import javax.transaction.Transactional;
@@ -70,6 +71,21 @@ public class UserOpeningService implements ServiceInterface<UserOpeningDto> {
             return userOpeningBranch;
         }).collect(Collectors.toList()));
 
+        User user = new User();
+        user.setId(dto.getUserId());
+        userOpening.setUser(user);
+
+        return userOpeningRepository.save(userOpening).getId();
+    }
+
+    public Long save(UserOpeningCreationDto dto) {
+
+        UserOpening userOpening = convertToEntity(dto);
+
+        User user = new User();
+        user.setId(dto.getUserId());
+        userOpening.setUser(user);
+
         return userOpeningRepository.save(userOpening).getId();
     }
 
@@ -83,6 +99,19 @@ public class UserOpeningService implements ServiceInterface<UserOpeningDto> {
         userOpeningRepository.deleteById(id);
     }
 
+
+    public List<UserOpeningCreationDto> getAllByUserUsername(String username){
+        List<UserOpeningCreationDto> openigDtos = new ArrayList<>();
+        List<UserOpening> allByUserUsername = userOpeningRepository.getAllByUserUsername(username);
+
+        for(UserOpening userOpening : allByUserUsername){
+            openigDtos.add(modelMapper.map(userOpening, UserOpeningCreationDto.class));
+        }
+
+        return openigDtos;
+    }
+
+
     private UserOpeningDto convertToDto(UserOpening userOpening){
         return modelMapper.map(userOpening, UserOpeningDto.class);
     }
@@ -90,4 +119,5 @@ public class UserOpeningService implements ServiceInterface<UserOpeningDto> {
     private UserOpening convertToEntity(UserOpeningDto userOpeningDto){
         return modelMapper.map(userOpeningDto, UserOpening.class);
     }
+
 }

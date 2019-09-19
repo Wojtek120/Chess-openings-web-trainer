@@ -34,7 +34,7 @@ public class UserOpeningBranchService implements ServiceInterface<UserOpeningBra
 
         List<UserOpeningBranchDto> userOpeningBranchDtoList = new ArrayList<>();
 
-        for(UserOpeningBranch userOpeningBranch : userOpeningBranchRepository.findAll()){
+        for (UserOpeningBranch userOpeningBranch : userOpeningBranchRepository.findAll()) {
             userOpeningBranchDtoList.add(convertToDto(userOpeningBranch));
         }
 
@@ -46,7 +46,7 @@ public class UserOpeningBranchService implements ServiceInterface<UserOpeningBra
 
         List<UserOpeningBranch> userOpeningBranchList = new ArrayList<>();
 
-        for(UserOpeningBranchDto userOpeningBranchDto : dtos){
+        for (UserOpeningBranchDto userOpeningBranchDto : dtos) {
             userOpeningBranchList.add(convertToEntity(userOpeningBranchDto));
         }
 
@@ -89,19 +89,44 @@ public class UserOpeningBranchService implements ServiceInterface<UserOpeningBra
         userOpeningBranchRepository.deleteById(id);
     }
 
-    private UserOpeningBranchDto convertToDto(UserOpeningBranch userOpeningBranch){
+    private UserOpeningBranchDto convertToDto(UserOpeningBranch userOpeningBranch) {
         return modelMapper.map(userOpeningBranch, UserOpeningBranchDto.class);
     }
 
-    private UserOpeningBranch convertToEntity(UserOpeningBranchDto userOpeningBranchDto){
+    private UserOpeningBranch convertToEntity(UserOpeningBranchDto userOpeningBranchDto) {
         return modelMapper.map(userOpeningBranchDto, UserOpeningBranch.class);
     }
 
 
-    public void deleteAllByOpeningIdWithAllMoves(Long openingId){
+    public void deleteAllByOpeningIdWithAllMoves(Long openingId) {
         List<UserOpeningBranch> allByUserOpeningId = userOpeningBranchRepository.getAllByUserOpeningId(openingId);
 
-        allByUserOpeningId.forEach( e -> userOpeningMoveRepository.deleteAllByUserOpeningBranchId(e.getId()));
+        allByUserOpeningId.forEach(e -> userOpeningMoveRepository.deleteAllByUserOpeningBranchId(e.getId()));
         userOpeningBranchRepository.deleteAllByUserOpeningId(openingId);
+    }
+
+    public String loadOpeningBranchesInfo(Long openingId) {
+
+        StringBuilder string = new StringBuilder();
+        List<UserOpeningBranch> allByOpeningIdWithMoves = userOpeningBranchRepository.getAllByOpeningIdWithMoves(openingId);
+
+        string.append("{");
+        for (UserOpeningBranch userOpeningBranch : allByOpeningIdWithMoves) {
+
+            for (UserOpeningMove userOpeningMove : userOpeningBranch.getUserOpeningMoves()) {
+                string.append("\"branch.").append(userOpeningBranch.getBranchNumber()).append(".")
+                        .append(userOpeningBranch.getParentBranch()).append(".")
+                        .append(userOpeningMove.getMoveNumber()).append("\" : \"")
+                        .append(userOpeningMove.getPgn()).append("\",");
+            }
+        }
+
+        string.setLength(Math.max(string.length() - 1, 0));
+        string.append("}");
+
+
+        System.out.println(string);
+
+        return string.toString();
     }
 }

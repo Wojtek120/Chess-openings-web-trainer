@@ -1,4 +1,5 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: wojciech
@@ -28,7 +29,8 @@
 
             </a>
 
-            <a class="navbar-item" href="">
+            <c:url var="addOpening" value="/user/opening/add"/>
+            <a class="navbar-item" href="${addOpening}">
                 <h4><spring:message code="header.repositories"/></h4>
             </a>
 
