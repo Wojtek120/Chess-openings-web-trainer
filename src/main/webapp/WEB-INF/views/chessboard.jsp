@@ -31,6 +31,15 @@
         ul li {
             margin-left: 10%;
         }
+
+        button {
+            background-color: Transparent;
+            background-repeat:no-repeat;
+            border: none;
+            cursor:pointer;
+            overflow: hidden;
+            outline:none;
+        }
     </style>
 </head>
 <body>
@@ -57,14 +66,15 @@
     <div class="columns is-mobile">
         <div class="column is-4  is-centered">
             <div class="columns is-mobile">
-                <div class="column">
-                    <button id="changeOrientationBtn">Change orientation</button>
-                    <label>Status:</label>
-                    <div id="status"></div>
+                <div class="column is-1">
+
                 </div>
                 <div class="column is-centered">
                     <h4><spring:message code="main-chessboard.moves.tree"/></h4>
-                    <button id="saveTreeToDatabase"><spring:message code="main-chessboard.save-to-database"/></button>
+
+                    <a class="button is-primary is-small" id="saveTreeToDatabase"><spring:message code="main-chessboard.save-to-database"/></a>
+                    <a class="loadRepository button is-info is-small"><spring:message code="general.load"/></a>
+
                     <div id="openingTree">
                         <ul>
                             <li id="mainTree">
@@ -80,7 +90,16 @@
         </div>
         <div class="column is-4" style="text-align:left;">
 
-            <h4><spring:message code="main-chessboard.moves"/></h4>
+            <h4><spring:message code="main-chessboard.game-status"/> </h4>
+            <h4 id="status"></h4>
+            <a class="button is-primary is-small" id="changeOrientationBtn"><spring:message code="main-chessboard.flip-board"/> </a>
+            <h4> </h4>
+            <h4 id="trainingStatus" ><spring:message code="main-chessboard.status" /> </h4>
+            <h4 id="expectedStatus" ><spring:message code="main-chessboard.expected" /> </h4>
+            <h4 id="wasStatus" ><spring:message code="main-chessboard.was" /> </h4>
+
+
+<%--            <h4><spring:message code="main-chessboard.moves"/></h4>--%>
             <table class="table" id="pgnTable">
             </table>
         </div>
@@ -93,12 +112,30 @@
     <%--        <div id="pgn"></div>--%>
 
     <br>
+
+    <div class="columns is-mobile is-centered">
+
+
+
+    </div>
+
+    <div class="columns is-mobile is-centered">
+
+        <label for="trainAs" class="label"><spring:message code="user-opening.play-as"/></label>
+        <div class="control">
+            <div class="select">
+                <select required="true" class="select" id="trainAs">
+                    <option value="white"><spring:message
+                            code="user-opening-add.white"/></option>
+                    <option value="black"><spring:message
+                            code="user-opening-add.black"/></option>
+                </select>
+            </div>
+        </div>
+
+        <a class="button is-success is-medium" id="trainBtn"><spring:message code="header.train"/></a>
+    </div>
 </section>
-
-
-<button class="loadRepository">Load</button>
-<button id="trainBtn">Train</button>
-
 
 
 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>

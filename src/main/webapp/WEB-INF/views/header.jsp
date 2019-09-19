@@ -24,12 +24,13 @@
 
     <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-            <a class="navbar-item" href="">
+            <c:url var="chessboard" value="/chessboard/"/>
+            <a class="navbar-item" href="${chessboard}">
                 <h4><spring:message code="header.train"/></h4>
 
             </a>
 
-            <c:url var="addOpening" value="/user/opening/add"/>
+            <c:url var="addOpening" value="/user/opening/list"/>
             <a class="navbar-item" href="${addOpening}">
                 <h4><spring:message code="header.repositories"/></h4>
             </a>

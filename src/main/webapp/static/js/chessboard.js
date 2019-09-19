@@ -11,6 +11,8 @@ $(() => {
     const game = new Chess();
     let isInTrainingMode = false;
     let movesForTraining = [];
+    let trainingCounter = 0;
+    let playAs = 'white';
 
 
     /**
@@ -40,7 +42,7 @@ $(() => {
         $('#fen').html(game.fen());
         $('#pgn').html(game.pgn());
 
-        if(!isInTrainingMode) {
+        if (!isInTrainingMode) {
             updatePgnTable(game.pgn());
             updateOpeningTree(game.pgn());
         } else {
@@ -48,11 +50,59 @@ $(() => {
         }
     }
 
-    function makeMove () {
+    /**
+     * Make move
+     */
+    function makeMove() {
+
+        console.log("Make move fn");
+
+        const actualPgn = game.pgn();
+        let shouldBePgn = movesForTraining[trainingCounter];
+
+        console.log(actualPgn);
+        console.log(shouldBePgn);
+
+        let expectedHeader = $("#expectedStatus");
+        let wasHeader = $("#wasStatus");
+
+        if(actualPgn !== "") {
+            expectedHeader.html("Expected " + shouldBePgn.split(" ").slice(-1).pop());
+            wasHeader.html("Was " + actualPgn.split(" ").slice(-1).pop());
+        }
+
+        if (actualPgn === shouldBePgn || actualPgn === "") {
+
+            expectedHeader.removeClass("has-text-danger").addClass("has-text-success");
+            wasHeader.removeClass("has-text-danger").addClass("has-text-success");
+
+            if (playAs === 'white') {
+                game.load_pgn(movesForTraining[trainingCounter + 1]);
+                trainingCounter = trainingCounter + 2;
+                board.position(game.fen());
+            } else {
+                game.load_pgn(movesForTraining[trainingCounter + 1]);
+                trainingCounter = trainingCounter + 2;
+                board.position(game.fen());
+            }
+
+            //if next is starting move - new branch
+            if (movesForTraining[trainingCounter].split(" ").length === 2) {
+                game.reset();
+                board.position(game.fen());
+            }
+        } else {
+            console.log("DUPA");
+            game.undo();
+            board.position(game.fen());
+
+            expectedHeader.removeClass("has-text-success").addClass("has-text-danger");
+            wasHeader.removeClass("has-text-success").addClass("has-text-danger");
+        }
 
     }
 
-    function onSnapEnd () {
+    function onSnapEnd() {
         board.position(game.fen())
     }
 
@@ -166,7 +216,7 @@ $(() => {
 
         if (dividedPgn.length % 3 === 2) {
             moveValue = dividedPgn[dividedPgn.length - 2] + " " + dividedPgn[dividedPgn.length - 1];
-        } else if (dividedPgn.length >= 3 && firstInBranch){
+        } else if (dividedPgn.length >= 3 && firstInBranch) {
             moveValue = dividedPgn[dividedPgn.length - 3] + "..." + dividedPgn[dividedPgn.length - 1];
         } else {
             moveValue = dividedPgn[dividedPgn.length - 1];
@@ -340,7 +390,7 @@ $(() => {
                 actualOpeningTree = $(`<li data-branch="${branchNumber}" data-parent="${parentNumber}"></li>`).appendTo(actualOpeningTree);
                 $(`<button data-pgn="${pgnStr}">${moveValue}</button>`).appendTo(actualOpeningTree);
 
-            }else {
+            } else {
                 let branchToAppendToNumber = -1;
 
                 while (branchToAppendToNumber !== parentNumber) {
@@ -360,30 +410,61 @@ $(() => {
     };
 
 
-
     $("#trainBtn").on('click', e => {
 
-        $("#mainTree").find("button").each((index, element) => {
-            console.log($(element).data("pgn"));
-            movesForTraining.push($(element).data("pgn"));
-        })
+        isInTrainingMode = !isInTrainingMode;
+        trainingCounter = 0;
+        playAs = $("#trainAs").val();
+
+        if (isInTrainingMode) {
+            game.reset();
+            board.position(game.fen());
+            $("#trainBtn").removeClass("is-success").addClass("is-danger");
+        } else {
+            $("#trainBtn").removeClass("is-danger").addClass("is-success");
+        }
+
+
+        $("#openingTree").find("li").each((index, element) => {
+
+            $(element).children("button").each(((index1, element1) => {
+
+                if (index !== 0 && index1 === 0) {
+
+                    const splitPgn = $(element1).data("pgn").split(" ");
+
+                    if (splitPgn.length % 3 === 2) {
+                        putToTrainingArrayFirstMovesFromNewBranch(splitPgn.length - 2, splitPgn);
+                    } else {
+                        putToTrainingArrayFirstMovesFromNewBranch(splitPgn.length - 1, splitPgn);
+                    }
+                }
+
+                movesForTraining.push($(element1).data("pgn"));
+            }));
+        });
+
+        if (playAs === "black" && isInTrainingMode) {
+            trainingCounter--;
+            window.setTimeout(makeMove, 250);
+        }
+
+        console.log(movesForTraining);
+
     });
 
+    const putToTrainingArrayFirstMovesFromNewBranch = (iterations, splitPng) => {
 
+        movesForTraining.push(splitPng[0] + " " + splitPng[1]);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        for (let i = 2; i < iterations; i++) {
+            if (i % 3 === 1) {
+                movesForTraining.push(movesForTraining[movesForTraining.length - 1] + " " + splitPng[i - 1] + " " + splitPng[i]);
+            } else if (i % 3 === 2) {
+                movesForTraining.push(movesForTraining[movesForTraining.length - 1] + " " + splitPng[i]);
+            }
+        }
+    };
 
 
     var $status = $('#status')
