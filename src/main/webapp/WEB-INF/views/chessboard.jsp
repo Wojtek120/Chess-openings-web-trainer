@@ -96,6 +96,11 @@
 </section>
 
 
+<button class="loadRepository">Load</button>
+<button id="trainBtn">Train</button>
+
+
+
 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
 <script src="static/js/chessboard.js"></script>

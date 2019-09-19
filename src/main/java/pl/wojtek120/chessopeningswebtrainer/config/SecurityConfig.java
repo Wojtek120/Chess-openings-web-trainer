@@ -1,5 +1,6 @@
 package pl.wojtek120.chessopeningswebtrainer.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,6 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder(){
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -52,5 +54,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .csrf()
                 .and();
+
     }
 }

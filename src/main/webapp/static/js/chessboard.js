@@ -3,12 +3,14 @@ $(() => {
         draggable: true,
         position: 'start',
         onDragStart: onDragStart,
-        onDrop: onDrop
-        // onSnapEnd: onSnapEnd
+        onDrop: onDrop,
+        onSnapEnd: onSnapEnd
     };
 
     const board = Chessboard($("#myBoard"), config);
     const game = new Chess();
+    let isInTrainingMode = false;
+    let movesForTraining = [];
 
 
     /**
@@ -37,11 +39,22 @@ $(() => {
 
         $('#fen').html(game.fen());
         $('#pgn').html(game.pgn());
-        updatePgnTable(game.pgn());
-        updateOpeningTree(game.pgn());
-        // $("pgnString").attr()
+
+        if(!isInTrainingMode) {
+            updatePgnTable(game.pgn());
+            updateOpeningTree(game.pgn());
+        } else {
+            window.setTimeout(makeMove, 250);
+        }
     }
 
+    function makeMove () {
+
+    }
+
+    function onSnapEnd () {
+        board.position(game.fen())
+    }
 
     const tableWithPgns = $("#pgnTable");
     /**
@@ -93,9 +106,8 @@ $(() => {
     let actualOpeningTree = $("#mainTree");
     const updateOpeningTree = pgnString => {
         const dividedPgn = pgnString.split(" ");
-        let moveValue;
-
-        moveValue = getLastMoveValue(dividedPgn);
+        const fullPgn = [...dividedPgn];
+        let isFirstInBranch = false;
 
         if (dividedPgn.length % 3 === 0) {
             dividedPgn.pop();
@@ -106,9 +118,10 @@ $(() => {
 
         const lastMovePgn = dividedPgn.join(` `);
         let addButtonFlag = true;
+        const openingTree = $("#openingTree");
 
         //Check if move is alreade in repository
-        $("#openingTree").find("button").each((index, element) => {
+        openingTree.find("button").each((index, element) => {
 
             if ($(element).attr("data-pgn") === pgnString) {
                 addButtonFlag = false;
@@ -116,13 +129,18 @@ $(() => {
         });
 
         //Check to with branch move belongs to or create new branch
-        $("#openingTree").find("button").each((index, element) => {
+        openingTree.find("button").each((index, element) => {
 
             if (element.getAttribute("data-pgn") === lastMovePgn && $(element).next().is('button') && addButtonFlag) {
                 actualOpeningTree = $(`<ul class="nested"></ul>`).appendTo(actualOpeningTree);
                 actualOpeningTree = $(`<li></li>`).appendTo(actualOpeningTree);
+
+                isFirstInBranch = true;
             }
         });
+
+
+        let moveValue = getLastMoveValue(fullPgn, isFirstInBranch);
 
 
         if (addButtonFlag) {
@@ -140,13 +158,16 @@ $(() => {
     /**
      * Get value of last move - this text is printed on button
      * @param dividedPgn - png string split(" ")
+     * @param firstInBranch
      * @returns {string} - last move value
      */
-    const getLastMoveValue = dividedPgn => {
+    const getLastMoveValue = (dividedPgn, firstInBranch) => {
         let moveValue;
 
         if (dividedPgn.length % 3 === 2) {
             moveValue = dividedPgn[dividedPgn.length - 2] + " " + dividedPgn[dividedPgn.length - 1];
+        } else if (dividedPgn.length >= 3 && firstInBranch){
+            moveValue = dividedPgn[dividedPgn.length - 3] + "..." + dividedPgn[dividedPgn.length - 1];
         } else {
             moveValue = dividedPgn[dividedPgn.length - 1];
         }
@@ -165,6 +186,8 @@ $(() => {
             board.position(game.fen());
 
             actualOpeningTree = $(e.target).closest("li");
+
+            updatePgnTable(pgnString);
         }
     });
 
@@ -239,7 +262,7 @@ $(() => {
     $(function () {
         var token = $("input[name='_csrf']").val();
         var header = "X-CSRF-TOKEN";
-        $(document).ajaxSend(function(e, xhr, options) {
+        $(document).ajaxSend(function (e, xhr, options) {
             xhr.setRequestHeader(header, token);
         });
     });
@@ -249,6 +272,118 @@ $(() => {
      * Fip board on click
      */
     $("#changeOrientationBtn").on('click', board.flip);
+
+
+    /**
+     * On click load opening branches from database
+     */
+    $(".loadRepository").on('click', () => {
+
+        $.ajax({
+            url: '/chessboard/branch/load/1',
+            contentType: "application/json",
+            method: "GET",
+            success: function (data) {
+
+                let json = JSON.parse(data);
+                createTree(json);
+
+            }
+        })
+
+    });
+
+
+    /**
+     * Create tree from json
+     */
+    const createTree = treeJson => {
+
+        console.log(Object.keys(treeJson));
+
+        let actualOpeningTree = $("#mainTree");
+        actualOpeningTree.data("branch", 0);
+        actualOpeningTree.data("parent", -1);
+
+        let previousBranch = 0;
+        let previousParentBranch = -1;
+
+
+        $(Object.keys(treeJson)).each((index, el) => {
+
+            const myRegexp = /branch.(\d+).(-?\d+).(\d+)/;
+            const numbers = myRegexp.exec(el);
+
+            const branchNumber = parseInt(numbers[1], 10);
+            const parentNumber = parseInt(numbers[2], 10);
+            const moveNumber = parseInt(numbers[3], 10);
+            const pgnStr = treeJson[el];
+
+            let moveValue = getLastMoveValue(pgnStr.split(" "), true);
+
+            console.log(moveValue);
+
+            if (previousBranch === branchNumber && previousParentBranch === parentNumber) {
+                moveValue = getLastMoveValue(pgnStr.split(" "), false);
+                $(`<button data-pgn="${pgnStr}">${moveValue}</button>`).appendTo(actualOpeningTree);
+
+            } else if (previousBranch === parentNumber) {
+
+
+                actualOpeningTree = $(`<ul class="nested"></ul>`).appendTo(actualOpeningTree);
+                actualOpeningTree = $(`<li data-branch="${branchNumber}" data-parent="${parentNumber}"></li>`).appendTo(actualOpeningTree);
+                $(`<button data-pgn="${pgnStr}">${moveValue}</button>`).appendTo(actualOpeningTree);
+
+            } else if (previousParentBranch === parentNumber) {
+
+                actualOpeningTree = $(`<ul class="nested"></ul>`).insertAfter(actualOpeningTree.closest("li"));
+                actualOpeningTree = $(`<li data-branch="${branchNumber}" data-parent="${parentNumber}"></li>`).appendTo(actualOpeningTree);
+                $(`<button data-pgn="${pgnStr}">${moveValue}</button>`).appendTo(actualOpeningTree);
+
+            }else {
+                let branchToAppendToNumber = -1;
+
+                while (branchToAppendToNumber !== parentNumber) {
+                    actualOpeningTree = actualOpeningTree.parents("li").first();
+                    branchToAppendToNumber = actualOpeningTree.data("branch");
+                }
+
+                actualOpeningTree = $(`<ul class="nested"></ul>`).appendTo(actualOpeningTree.closest("li"));
+                actualOpeningTree = $(`<li data-branch="${branchNumber}" data-parent="${parentNumber}"></li>`).appendTo(actualOpeningTree);
+                $(`<button data-pgn="${pgnStr}">${moveValue}</button>`).appendTo(actualOpeningTree);
+
+            }
+
+            previousBranch = branchNumber;
+            previousParentBranch = parentNumber;
+        })
+    };
+
+
+
+    $("#trainBtn").on('click', e => {
+
+        $("#mainTree").find("button").each((index, element) => {
+            console.log($(element).data("pgn"));
+            movesForTraining.push($(element).data("pgn"));
+        })
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     var $status = $('#status')

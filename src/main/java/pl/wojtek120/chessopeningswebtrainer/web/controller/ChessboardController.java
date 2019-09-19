@@ -2,10 +2,9 @@ package pl.wojtek120.chessopeningswebtrainer.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.annotations.Parameter;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.UserOpeningDto;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.branch.UserOpeningBranchDto;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.move.UserOpeningMoveCreationDto;
@@ -38,12 +37,14 @@ public class ChessboardController {
     @RequestMapping("")
     public String chessboard() {
 
-        loadOpeningBranchesInfo(1L); //TODO id
+//        loadOpeningBranchesInfo(1L); //TODO id
 
         return "chessboard";
     }
 
 
+    @GetMapping("/branch/load/{id}")
+    @ResponseBody
     private String loadOpeningBranchesInfo(Long openingId) {
         return userOpeningBranchService.loadOpeningBranchesInfo(openingId);
     }
