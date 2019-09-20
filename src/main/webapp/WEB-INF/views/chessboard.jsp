@@ -43,6 +43,8 @@
     </style>
 </head>
 <body>
+<input id="idOfCurrentOpening" type="hidden" name="idOfCurrentOpening" data-sessionatr="${sessionScope.opening}" />
+
 
 <c:import url="header.jsp"/>
 

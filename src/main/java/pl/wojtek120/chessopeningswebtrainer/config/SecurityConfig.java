@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,18 +37,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authoritiesByUsernameQuery("SELECT username, authority FROM user_authorities WHERE username = ?");
     }
 
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
                     .antMatchers("/").anonymous()
+//                    .antMatchers("/static/img/**").hasRole("USER")
                     .antMatchers("/register").anonymous()
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/user/**").hasRole("USER")
                     .antMatchers("/chessboard").hasRole("USER")
                     .antMatchers("/chessboard/**").hasRole("USER")
-                    .antMatchers("/img/**").permitAll()
-                    .antMatchers("/static/**").permitAll()
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()

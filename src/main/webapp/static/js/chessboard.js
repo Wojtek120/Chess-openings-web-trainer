@@ -299,7 +299,7 @@ $(() => {
 
 
         $.ajax({
-            url: '/chessboard/save/repository',
+            url: `/chessboard/save/repository`,
             data: json,
             contentType: "application/json",
             method: "POST",
@@ -329,8 +329,12 @@ $(() => {
      */
     $(".loadRepository").on('click', () => {
 
+        const idOfCurrentOpening = getCookie("opening");
+        console.log("SESSION ATR");
+        console.log(idOfCurrentOpening);
+
         $.ajax({
-            url: '/chessboard/branch/load/1',
+            url: `/chessboard/branch/load`,
             contentType: "application/json",
             method: "GET",
             success: function (data) {
@@ -343,6 +347,17 @@ $(() => {
 
     });
 
+
+    /**
+     * Get cookie value by name
+     * @param name
+     * @returns {string}
+     */
+    function getCookie(name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+    }
 
     /**
      * Create tree from json

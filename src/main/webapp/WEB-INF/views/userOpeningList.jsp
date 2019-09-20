@@ -58,7 +58,7 @@
                     <td>${opening.playedAs}</td>
                     <td>${opening.isPublic}</td>
                     <td>
-                        <c:url var="train" value="${opening.id}"/>
+                        <c:url var="train" value="/user/opening/train/${opening.id}"/>
                         <a href="${train}">
                             <button class="button is-small is-rounded is-details"><spring:message
                                     code="user-opening-list.train"/></button>

@@ -14,6 +14,9 @@ import pl.wojtek120.chessopeningswebtrainer.model.services.UserOpeningBranchServ
 import pl.wojtek120.chessopeningswebtrainer.model.services.UserOpeningMoveService;
 import pl.wojtek120.chessopeningswebtrainer.model.services.UserOpeningService;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -35,7 +38,11 @@ public class ChessboardController {
     }
 
     @RequestMapping("")
-    public String chessboard() {
+    public String chessboard(@CookieValue(value = "opening") Long currentOpeningId) {
+
+        if(currentOpeningId == null){
+            return "/user/opening/list";
+        }
 
 //        loadOpeningBranchesInfo(1L); //TODO id
 
@@ -43,19 +50,28 @@ public class ChessboardController {
     }
 
 
-    @GetMapping("/branch/load/{id}")
+    @GetMapping("/branch/load")
     @ResponseBody
-    private String loadOpeningBranchesInfo(Long openingId) {
-        return userOpeningBranchService.loadOpeningBranchesInfo(openingId);
+    private String loadOpeningBranchesInfo(@CookieValue(value = "opening") Long currentOpeningId) {
+
+        if(currentOpeningId == null){
+            return "/user/opening/list";
+        }
+
+        return userOpeningBranchService.loadOpeningBranchesInfo(currentOpeningId);
     }
 
 
     @PostMapping("/save/repository")
-    public String saveBranchStringToDatabase(@RequestBody String jsonBranchStr) {
+    public String saveBranchStringToDatabase(@CookieValue(value = "opening") Long currentOpeningId, @RequestBody String jsonBranchStr, HttpServletResponse response) {
 
-        UserOpeningDto userOpeningDto = userOpeningService.getOne(1L); //TODO id
+        if(currentOpeningId == null){
+            return "/user/opening/list";
+        }
 
-        userOpeningBranchService.deleteAllByOpeningIdWithAllMoves(1L); //TODO id
+        UserOpeningDto userOpeningDto = userOpeningService.getOne(currentOpeningId); //TODO id
+
+        userOpeningBranchService.deleteAllByOpeningIdWithAllMoves(currentOpeningId); //TODO id
 
         ObjectMapper objectMapper = new ObjectMapper();
         Long branchId = null;
@@ -73,7 +89,7 @@ public class ChessboardController {
                     int moveNumber = numbersOfActualBranchParentAndMoveNumber[2];
 
                     if (moveNumber == 0) {
-                        UserOpeningBranchDto userOpeningBranchDto = new UserOpeningBranchDto(currentBranchNumber, parentBranchNumber, 1L); //TODO user opening id
+                        UserOpeningBranchDto userOpeningBranchDto = new UserOpeningBranchDto(currentBranchNumber, parentBranchNumber, currentOpeningId); //TODO user opening id
                         branchId = userOpeningBranchService.save(userOpeningBranchDto);
 
 
@@ -91,7 +107,7 @@ public class ChessboardController {
             e.printStackTrace();
         }
 
-        loadOpeningBranchesInfo(1L); //TODO usun
+        loadOpeningBranchesInfo(currentOpeningId); //TODO usun
 
         return "redirect:/chessboard";
     }
