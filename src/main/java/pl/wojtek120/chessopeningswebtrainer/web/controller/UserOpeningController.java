@@ -3,10 +3,8 @@ package pl.wojtek120.chessopeningswebtrainer.web.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.UserOpeningCreationDto;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.UserOpeningDto;
 import pl.wojtek120.chessopeningswebtrainer.model.services.UserOpeningService;
@@ -54,15 +52,17 @@ public class UserOpeningController {
         return "redirect:/user/opening/list?addedOpeningId=" + userOpeningService.save(userOpeningDto);
     }
 
+
+
     @GetMapping("/train/{id}")
-    public String trainSelectedBranch(@PathVariable String id, HttpServletResponse response) {
+    @ResponseBody
+    public ModelAndView trainSelectedBranch(@PathVariable String id, HttpServletResponse response) {
 
         Cookie cookie = new Cookie("opening", id);
-//        cookie.setMaxAge(60 * 60 * 24);
         cookie.setPath("/");
         response.addCookie(cookie);
 
 
-        return "/chessboard";
+        return new ModelAndView("redirect:/chessboard");
     }
 }

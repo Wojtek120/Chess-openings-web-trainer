@@ -19,12 +19,12 @@
 
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-        <img src="static/img/book.png" height="42" width="80" vspace="5">
+        <img src="/static/img/book.png" height="42" width="80" vspace="5">
     </div>
 
     <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-            <c:url var="chessboard" value="/chessboard/"/>
+            <c:url var="chessboard" value="/chessboard"/>
             <a class="navbar-item" href="${chessboard}">
                 <h4><spring:message code="header.train"/></h4>
 
@@ -40,7 +40,7 @@
         <div class="navbar-end">
             <div class="navbar-item">
                 <a href="https://github.com/Wojtek120">
-                    <img src="static/img/GitHub.png">
+                    <img src="/static/img/GitHub.png">
                 </a>
             </div>
         </div>

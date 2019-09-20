@@ -89,6 +89,7 @@
     <br>
 </section>
 
+<c:import url="fotter.jsp"/>
 
 </body>
 </html>

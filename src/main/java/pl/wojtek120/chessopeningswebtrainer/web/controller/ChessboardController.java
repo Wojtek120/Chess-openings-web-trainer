@@ -37,14 +37,13 @@ public class ChessboardController {
         this.userOpeningService = userOpeningService;
     }
 
-    @RequestMapping("")
+    @RequestMapping
     public String chessboard(@CookieValue(value = "opening") Long currentOpeningId) {
 
         if(currentOpeningId == null){
             return "/user/opening/list";
         }
 
-//        loadOpeningBranchesInfo(1L); //TODO id
 
         return "chessboard";
     }
@@ -69,9 +68,9 @@ public class ChessboardController {
             return "/user/opening/list";
         }
 
-        UserOpeningDto userOpeningDto = userOpeningService.getOne(currentOpeningId); //TODO id
+        UserOpeningDto userOpeningDto = userOpeningService.getOne(currentOpeningId);
 
-        userOpeningBranchService.deleteAllByOpeningIdWithAllMoves(currentOpeningId); //TODO id
+        userOpeningBranchService.deleteAllByOpeningIdWithAllMoves(currentOpeningId);
 
         ObjectMapper objectMapper = new ObjectMapper();
         Long branchId = null;
@@ -89,7 +88,7 @@ public class ChessboardController {
                     int moveNumber = numbersOfActualBranchParentAndMoveNumber[2];
 
                     if (moveNumber == 0) {
-                        UserOpeningBranchDto userOpeningBranchDto = new UserOpeningBranchDto(currentBranchNumber, parentBranchNumber, currentOpeningId); //TODO user opening id
+                        UserOpeningBranchDto userOpeningBranchDto = new UserOpeningBranchDto(currentBranchNumber, parentBranchNumber, currentOpeningId);
                         branchId = userOpeningBranchService.save(userOpeningBranchDto);
 
 

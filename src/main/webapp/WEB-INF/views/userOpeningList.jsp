@@ -33,49 +33,59 @@
 <section class="has-background-light">
     <br>
 
-    <c:url var="addOpening" value="/user/opening/add"/>
-    <a href="${addOpening}">
-        <h3><spring:message code="user-opening-add.title-on-webpage" /></h3>
-    </a>
-    <br>
+    <div class="columns">
+        <div class="column is-1"></div>
+        <div class="column">
+            <c:url var="addOpening" value="/user/opening/add"/>
+            <a class="button is-primary" href="${addOpening}">
+                <h3><spring:message code="user-opening-add.title-on-webpage"/></h3>
+            </a>
+        </div>
+        <div class="column is-1"></div>
+    </div>
 
-    <div class="columns is-mobile is-centered">
+    <div class="columns">
+        <div class="column is-1"></div>
+        <div class="column is-mobile is-centered">
 
-        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-            <thead>
-            <tr>
-                <th><spring:message code="user-opening.name"/></th>
-                <th><spring:message code="user-opening.play-as"/></th>
-                <th><spring:message code="user-opening.is-public"/></th>
-                <th><spring:message code="general.action"/></th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <c:forEach items="${openings}" var="opening">
+            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                <thead>
                 <tr>
-                    <td>${opening.name}</td>
-                    <td>${opening.playedAs}</td>
-                    <td>${opening.isPublic}</td>
-                    <td>
-                        <c:url var="train" value="/user/opening/train/${opening.id}"/>
-                        <a href="${train}">
-                            <button class="button is-small is-rounded is-details"><spring:message
-                                    code="user-opening-list.train"/></button>
-                        </a>
-
-                        <c:url var="delete" value="${opening.id}"/>
-                        <a href="${delete}">
-                            <button class="button is-small is-rounded is-danger"><spring:message
-                                    code="general.delete"/></button>
-                        </a>
-                    </td>
+                    <th><spring:message code="user-opening.name"/></th>
+                    <th><spring:message code="user-opening.play-as"/></th>
+                    <th><spring:message code="user-opening.is-public"/></th>
+                    <th><spring:message code="general.action"/></th>
                 </tr>
-            </c:forEach>
-            </tbody>
-        </table>
+                </thead>
+
+                <tbody>
+                <c:forEach items="${openings}" var="opening">
+                    <tr>
+                        <td>${opening.name}</td>
+                        <td>${opening.playedAs}</td>
+                        <td>${opening.isPublic}</td>
+                        <td>
+                            <c:url var="train" value="/user/opening/train/${opening.id}"/>
+                            <a href="${train}">
+                                <button class="button is-small is-rounded is-details"><spring:message
+                                        code="user-opening-list.train"/></button>
+                            </a>
+
+                            <c:url var="delete" value="${opening.id}"/>
+                            <a href="${delete}">
+                                <button class="button is-small is-rounded is-danger"><spring:message
+                                        code="general.delete"/></button>
+                            </a>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
+        <div class="column is-1"></div>
     </div>
     <br>
 </section>
+<c:import url="fotter.jsp"/>
 </body>
 </html>

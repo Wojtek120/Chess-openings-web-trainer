@@ -13,7 +13,8 @@ $(() => {
     let movesForTraining = [];
     let trainingCounter = 0;
     let playAs = 'white';
-
+    const finished = $("#trainingFinished");
+    finished.slideUp(0);
 
     /**
      * When chess piece is dragged
@@ -66,7 +67,7 @@ $(() => {
         let expectedHeader = $("#expectedStatus");
         let wasHeader = $("#wasStatus");
 
-        if(actualPgn !== "") {
+        if (actualPgn !== "") {
             expectedHeader.html("Expected " + shouldBePgn.split(" ").slice(-1).pop());
             wasHeader.html("Was " + actualPgn.split(" ").slice(-1).pop());
         }
@@ -76,15 +77,22 @@ $(() => {
             expectedHeader.removeClass("has-text-danger").addClass("has-text-success");
             wasHeader.removeClass("has-text-danger").addClass("has-text-success");
 
-            if (playAs === 'white') {
-                game.load_pgn(movesForTraining[trainingCounter + 1]);
-                trainingCounter = trainingCounter + 2;
-                board.position(game.fen());
-            } else {
-                game.load_pgn(movesForTraining[trainingCounter + 1]);
-                trainingCounter = trainingCounter + 2;
-                board.position(game.fen());
+
+            if (actualPgn === movesForTraining[movesForTraining.length - 1] || trainingCounter + 1 === movesForTraining.length - 1) {
+                console.log("Wygrana");
+                finished.slideDown();
             }
+
+            game.load_pgn(movesForTraining[trainingCounter + 1]);
+            trainingCounter = trainingCounter + 2;
+            board.position(game.fen());
+
+
+            console.log("tutaj");
+            console.log(trainingCounter);
+            console.log(movesForTraining.length);
+            console.log(movesForTraining);
+
 
             //if next is starting move - new branch
             if (movesForTraining[trainingCounter].split(" ").length === 2) {
@@ -92,7 +100,6 @@ $(() => {
                 board.position(game.fen());
             }
         } else {
-            console.log("DUPA");
             game.undo();
             board.position(game.fen());
 
@@ -427,6 +434,7 @@ $(() => {
 
     $("#trainBtn").on('click', e => {
 
+        finished.slideUp();
         isInTrainingMode = !isInTrainingMode;
         trainingCounter = 0;
         playAs = $("#trainAs").val();
