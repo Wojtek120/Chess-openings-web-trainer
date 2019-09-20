@@ -137,8 +137,10 @@
                     code="main-chessboard.flip-board"/> </a>
             <h4></h4>
             <h4 id="trainingStatus"><spring:message code="main-chessboard.status"/></h4>
-            <h4 id="expectedStatus"><spring:message code="main-chessboard.expected"/></h4>
-            <h4 id="wasStatus"><spring:message code="main-chessboard.was"/></h4>
+            <h4 id="expectedStatus"></h4>
+            <h4 id="wasStatus"></h4>
+<%--            <h4 id="expectedStatus"><spring:message code="main-chessboard.expected"/></h4>--%>
+<%--            <h4 id="wasStatus"><spring:message code="main-chessboard.was"/></h4>--%>
 
 
             <%--            <h4><spring:message code="main-chessboard.moves"/></h4>--%>

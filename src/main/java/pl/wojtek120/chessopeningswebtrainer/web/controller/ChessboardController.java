@@ -38,10 +38,12 @@ public class ChessboardController {
     }
 
     @RequestMapping
-    public String chessboard(@CookieValue(value = "opening") Long currentOpeningId) {
+    public String chessboard(@CookieValue(value = "opening", defaultValue = "-1") String currentOpeningIdStr) {
 
-        if(currentOpeningId == null){
-            return "/user/opening/list";
+        Long currentOpeningId = Long.parseLong(currentOpeningIdStr);
+
+        if(currentOpeningId == -1){
+            return "redirect:/user/opening/list";
         }
 
 
@@ -51,10 +53,12 @@ public class ChessboardController {
 
     @GetMapping("/branch/load")
     @ResponseBody
-    private String loadOpeningBranchesInfo(@CookieValue(value = "opening") Long currentOpeningId) {
+    private String loadOpeningBranchesInfo(@CookieValue(value = "opening", defaultValue = "-1") String currentOpeningIdStr) {
 
-        if(currentOpeningId == null){
-            return "/user/opening/list";
+        Long currentOpeningId = Long.parseLong(currentOpeningIdStr);
+
+        if(currentOpeningId == -1){
+            return "redirect:/user/opening/list";
         }
 
         return userOpeningBranchService.loadOpeningBranchesInfo(currentOpeningId);
@@ -62,10 +66,12 @@ public class ChessboardController {
 
 
     @PostMapping("/save/repository")
-    public String saveBranchStringToDatabase(@CookieValue(value = "opening") Long currentOpeningId, @RequestBody String jsonBranchStr, HttpServletResponse response) {
+    public String saveBranchStringToDatabase(@CookieValue(value = "opening", defaultValue = "-1") String currentOpeningIdStr, @RequestBody String jsonBranchStr, HttpServletResponse response) {
 
-        if(currentOpeningId == null){
-            return "/user/opening/list";
+        Long currentOpeningId = Long.parseLong(currentOpeningIdStr);
+
+        if(currentOpeningId == -1){
+            return "redirect:/user/opening/list";
         }
 
         UserOpeningDto userOpeningDto = userOpeningService.getOne(currentOpeningId);
@@ -106,7 +112,7 @@ public class ChessboardController {
             e.printStackTrace();
         }
 
-        loadOpeningBranchesInfo(currentOpeningId); //TODO usun
+//        loadOpeningBranchesInfo(currentOpeningId); //TODO usun
 
         return "redirect:/chessboard";
     }

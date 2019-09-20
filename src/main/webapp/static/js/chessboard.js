@@ -330,6 +330,26 @@ $(() => {
      */
     $("#changeOrientationBtn").on('click', board.flip);
 
+    const loadToTree = () => {
+        const idOfCurrentOpening = getCookie("opening");
+
+        $("#mainTree").empty();
+
+
+        $.ajax({
+            url: `/chessboard/branch/load`,
+            contentType: "application/json",
+            method: "GET",
+            success: function (data) {
+
+                let json = JSON.parse(data);
+                createTree(json);
+
+            }
+        })
+    };
+
+    loadToTree();
 
     /**
      * On click load opening branches from database
@@ -337,8 +357,9 @@ $(() => {
     $(".loadRepository").on('click', () => {
 
         const idOfCurrentOpening = getCookie("opening");
-        console.log("SESSION ATR");
-        console.log(idOfCurrentOpening);
+
+        $("#mainTree").empty();
+
 
         $.ajax({
             url: `/chessboard/branch/load`,

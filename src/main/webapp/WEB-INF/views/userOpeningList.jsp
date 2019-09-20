@@ -48,34 +48,37 @@
         <div class="column is-1"></div>
         <div class="column is-mobile is-centered">
 
-            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+            <table align="center" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                 <thead>
                 <tr>
-                    <th><spring:message code="user-opening.name"/></th>
-                    <th><spring:message code="user-opening.play-as"/></th>
-                    <th><spring:message code="user-opening.is-public"/></th>
-                    <th><spring:message code="general.action"/></th>
+                    <th align="center" ><spring:message code="user-opening.name"/></th>
+                    <th align="center"><spring:message code="user-opening.play-as"/></th>
+                    <th align="center"><spring:message code="user-opening.is-public"/></th>
+                    <th colspan="2" align="center"><spring:message code="general.action"/></th>
                 </tr>
                 </thead>
 
                 <tbody>
                 <c:forEach items="${openings}" var="opening">
                     <tr>
-                        <td>${opening.name}</td>
-                        <td>${opening.playedAs}</td>
-                        <td>${opening.isPublic}</td>
-                        <td>
+                        <td align="center">${opening.name}</td>
+                        <td align="center">${opening.playedAs}</td>
+                        <td align="center">${opening.isPublic}</td>
+                        <td align="center">
                             <c:url var="train" value="/user/opening/train/${opening.id}"/>
                             <a href="${train}">
                                 <button class="button is-small is-rounded is-details"><spring:message
                                         code="user-opening-list.train"/></button>
                             </a>
-
-                            <c:url var="delete" value="${opening.id}"/>
-                            <a href="${delete}">
+                        </td>
+                        <td align="center">
+                            <c:url var="delete" value="/user/opening/delete/${opening.id}"/>
+                            <form action="${delete}" method="post">
                                 <button class="button is-small is-rounded is-danger"><spring:message
                                         code="general.delete"/></button>
-                            </a>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            </form>
+
                         </td>
                     </tr>
                 </c:forEach>
