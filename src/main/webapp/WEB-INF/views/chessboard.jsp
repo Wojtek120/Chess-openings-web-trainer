@@ -146,6 +146,8 @@
             <%--            <h4><spring:message code="main-chessboard.moves"/></h4>--%>
             <table class="table" id="pgnTable">
             </table>
+
+            <h5 id="openingNameFromDb"></h5>
         </div>
     </div>
 

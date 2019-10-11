@@ -49,6 +49,8 @@ $(() => {
         } else {
             window.setTimeout(makeMove, 250);
         }
+
+        getOpeningName();
     }
 
     /**
@@ -386,6 +388,35 @@ $(() => {
         var parts = value.split("; " + name + "=");
         if (parts.length == 2) return parts.pop().split(";").shift();
     }
+
+
+    /**
+     * Get opening name from database
+     */
+    const getOpeningName = () => {
+
+        let pgnStr = game.pgn() + " ";
+
+        $.ajax({
+            url: `/chessboard/set/opening`,
+            data: pgnStr,
+            method: "POST",
+            headers: {"X-CSRF-TOKEN": $("input[name='_csrf']").val()},
+        });
+
+        $.ajax({
+            url: `/chessboard/get/opening`,
+            method: "GET",
+            success: function (data) {
+
+                console.log(data);
+                $("#openingNameFromDb").html(data);
+
+            }
+        });
+
+    };
+
 
     /**
      * Create tree from json

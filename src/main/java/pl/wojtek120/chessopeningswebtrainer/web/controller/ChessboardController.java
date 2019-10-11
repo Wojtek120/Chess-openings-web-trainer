@@ -2,21 +2,17 @@ package pl.wojtek120.chessopeningswebtrainer.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.annotations.Parameter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.UserOpeningDto;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.branch.UserOpeningBranchDto;
 import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.move.UserOpeningMoveCreationDto;
-import pl.wojtek120.chessopeningswebtrainer.model.dto.user.opening.move.UserOpeningMoveDto;
-import pl.wojtek120.chessopeningswebtrainer.model.entities.UserOpeningBranch;
+import pl.wojtek120.chessopeningswebtrainer.model.services.OpeningService;
 import pl.wojtek120.chessopeningswebtrainer.model.services.UserOpeningBranchService;
 import pl.wojtek120.chessopeningswebtrainer.model.services.UserOpeningMoveService;
 import pl.wojtek120.chessopeningswebtrainer.model.services.UserOpeningService;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,11 +26,15 @@ public class ChessboardController {
     private final UserOpeningMoveService userOpeningMoveService;
     private final UserOpeningBranchService userOpeningBranchService;
     private final UserOpeningService userOpeningService;
+    private final OpeningService openingService;
 
-    public ChessboardController(UserOpeningMoveService userOpeningMoveService, UserOpeningBranchService userOpeningBranchService, UserOpeningService userOpeningService) {
+    private String openingName;
+
+    public ChessboardController(UserOpeningMoveService userOpeningMoveService, UserOpeningBranchService userOpeningBranchService, UserOpeningService userOpeningService, OpeningService openingService) {
         this.userOpeningMoveService = userOpeningMoveService;
         this.userOpeningBranchService = userOpeningBranchService;
         this.userOpeningService = userOpeningService;
+        this.openingService = openingService;
     }
 
     @RequestMapping
@@ -116,6 +116,26 @@ public class ChessboardController {
 
         return "redirect:/chessboard";
     }
+
+    @PostMapping("/set/opening")
+    public void setOpeningName(@RequestBody String pgnStr){
+
+        pgnStr = pgnStr.replaceAll("\\+", " ").replaceAll("=", "");
+
+//        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//        System.out.println(pgnStr); //TODO NIE DZIALA GDY SZACH
+
+        openingName = openingService.getOpeningNameByPgn(pgnStr);
+
+    }
+
+    @GetMapping("/get/opening")
+    @ResponseBody
+    public String getOpeningName(){
+        return openingName;
+    }
+
+
 
     private void setAndAddMoveToDatabase(int moveNumber, Long userOpeningBranchId, String pgn) {
         UserOpeningMoveCreationDto userOpeningMoveDto = new UserOpeningMoveCreationDto();

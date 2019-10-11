@@ -75,6 +75,19 @@ public class OpeningService implements ServiceInterface<OpeningDto> {
         openingRepository.deleteById(id);
     }
 
+
+    public String getOpeningNameByPgn(String pgn){
+        Opening openingByPgn = openingRepository.getOpeningByPgn(pgn);
+
+        if(openingByPgn == null) {
+            return "";
+        } else {
+            return openingByPgn.getOpeningName();
+        }
+
+    }
+
+
     private OpeningDto convertToDto(Opening opening){
         return modelMapper.map(opening, OpeningDto.class);
     }
